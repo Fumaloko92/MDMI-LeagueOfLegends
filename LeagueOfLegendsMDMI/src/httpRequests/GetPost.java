@@ -9,7 +9,14 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.net.ssl.HttpsURLConnection;
+import org.json.*;
 /**
  *
  * @author lucas
@@ -23,7 +30,7 @@ public class GetPost {
     }
    
 	// HTTP GET request
-	public void sendGet(String url) throws Exception {
+	private JSONObject sendGet(String url) throws Exception {
 		
 		url+=API_KEY;
 		URL obj = new URL(url);
@@ -48,10 +55,10 @@ public class GetPost {
 			response.append(inputLine);
 		}
 		in.close();
+                
 
-		//print result
-		System.out.println(response.toString());
-
+		JSONObject jObj=new JSONObject(response.toString());
+                return jObj;    
 	}
 	
 	// HTTP POST request
@@ -95,4 +102,101 @@ public class GetPost {
 
 	}
         
+        public ArrayList<ArrayList<String>> getAllChampions(float headersLevel,float dataLevel){
+            try{
+            String url= "https://global.api.pvp.net/api/lol/static-data/euw/v1.2/champion?champData=image&api_key=";
+            JSONObject obj= sendGet(url);
+            obj=(JSONObject)obj.get("data");
+            ArrayList<ArrayList<String>> result=new ArrayList<ArrayList<String>>();
+            ArrayList<String> headers=new ArrayList<String>();
+            headers.addAll(asSortedList(getHeaders(headersLevel,obj)));
+            result=getRows(obj,headers,dataLevel);
+            result.add(0,headers);
+            
+            return result;
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+                return null;
+            }
+        }
+        
+        private ArrayList<ArrayList<String>> getRows(JSONObject obj,ArrayList<String> headers,float ignoreLevel){
+            ArrayList<ArrayList<String>> result=new ArrayList<ArrayList<String>>();
+            for(String key: obj.keySet())
+            {
+                if(ignoreLevel<=0)
+                {
+                    if(obj.get(key).getClass().getName().equals("org.json.JSONObject")){
+                    ArrayList<String> row=new ArrayList<String>();
+                    for(String header:headers)
+                        row.add(getValueFromCompositeKey(header,obj.getJSONObject(key)));            
+                    result.add(row);
+                   }
+                }else{
+                    if(obj.get(key).getClass().getName().equals("org.json.JSONObject"))
+                       for(ArrayList<String> row : getRows(obj.getJSONObject(key),headers,ignoreLevel-1))
+                           result.add(row);
+                }
+            }
+            return result;
+        }
+        
+        private String getValueFromCompositeKey(String key,JSONObject obj){
+            try{
+            String[] splits=key.split("[.]");
+            JSONObject temp=obj;
+            for(int i=0;i<splits.length-1;i++)
+                temp=temp.getJSONObject(splits[i]);
+            return String.valueOf(temp.get(splits[splits.length-1]));
+            }catch(Exception e)
+            {
+                return "";
+            }
+        }
+        private static <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
+            List<T> list = new ArrayList<T>(c);
+            java.util.Collections.sort(list);
+            return list;
+        }
+        
+        private HashSet<String> getHeaders(float ignoreLevel,JSONObject obj){
+            HashSet<String> header = new HashSet<String>();
+            for(String key: obj.keySet())
+            {
+                if(obj.get(key).getClass().getName().equals("org.json.JSONObject"))
+                {
+                  for(String k: getHeaders(ignoreLevel-1,obj.getJSONObject(key)))
+                      if(ignoreLevel<=1)
+                        header.add(key+"."+k);
+                  else
+                          if(ignoreLevel-1<=1)
+                              header.add(k);
+                }  
+                else
+                    if(ignoreLevel<=1)
+                    header.add(String.valueOf(key));
+                    
+            }
+            return header;
+        }
+        
+        public ArrayList<ArrayList<String>> getAllItems(float headersLevel,float dataLevel)
+        {
+            try{
+            String url= "https://global.api.pvp.net/api/lol/static-data/euw/v1.2/item?itemListData=all&api_key=";
+            JSONObject obj= sendGet(url);
+            obj=(JSONObject)obj.get("data");
+            ArrayList<ArrayList<String>> result=new ArrayList<ArrayList<String>>();
+            ArrayList<String> headers=new ArrayList<String>();
+            headers.addAll(asSortedList(getHeaders(headersLevel,obj)));
+            result=getRows(obj,headers,dataLevel);
+            result.add(0,headers);
+            
+            return result;
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+                return null;
+            }
+           
+        }
 }

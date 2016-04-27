@@ -5,6 +5,8 @@
  */
 package main;
 import httpRequests.GetPost;
+import csv.FileManager;
+
 /**
  *
  * @author lucas
@@ -15,12 +17,9 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		GetPost t=new GetPost("");//USE YOUR API KEY
-            try {
-                t.sendGet("https://euw.api.pvp.net/api/lol/euw/v1.2/champion?api_key=");
-            } catch (Exception ex) {
-                System.out.println("There were problems with the GET request");
-            }
+            GetPost t=new GetPost("de811933-2fe2-4c11-b968-48b8bb2211d0");//USE YOUR API KEY
+            FileManager.writeItems("champions.csv", t.getAllChampions(2,0));
+            FileManager.writeItems("items.csv", t.getAllItems(2,0));
 	}
 
 }
