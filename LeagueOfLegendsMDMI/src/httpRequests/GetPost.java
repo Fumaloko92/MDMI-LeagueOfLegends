@@ -45,6 +45,13 @@ public class GetPost {
         int responseCode = con.getResponseCode();
         System.out.println("\nSending 'GET' request to URL : " + url);
         System.out.println("Response Code : " + responseCode);
+        if(responseCode==404)
+            return new JSONObject("{\n" +
+"	\"status\": {\n" +
+"		\"message\": \"Not Found\",\n" +
+"		\"status_code\": 404\n" +
+"	}\n" +
+"}");
         if(responseCode!=200)
             return null;
         BufferedReader in = new BufferedReader(
@@ -329,10 +336,29 @@ public class GetPost {
     public ArrayList<ArrayList<String>> getMatchesInformationsByMatchID(String matchID,float headersLevel,float dataLevel,ArrayList<String> filters)
     {
         try{
-            String url= "https://euw.api.pvp.net/api/lol/euw/v2.2/match/"+matchID+"?includeTimeline=false&api_key=";
-            JSONObject obj= sendGet(url);
+            String[] region={"euw","eune","na","br","las","lan","oce","kr","jp","ru"};
+            int index=0;
+            boolean tryDifferentRegion=false;
+            JSONObject obj;
+            do{
+            String url= "https://"+region[index]+".api.pvp.net/api/lol/"+region[index]+"/v2.2/match/"+matchID+"?api_key=";
+            obj= sendGet(url);
             if(obj==null)
                 return null;
+            if(obj.has("status")){
+            if(String.valueOf(obj.getJSONObject("status").get("status_code")).equals("404")){
+                tryDifferentRegion=true;
+            }
+            }else
+                tryDifferentRegion=false;
+            System.out.println(tryDifferentRegion);
+            if(tryDifferentRegion){
+                index++;
+            }
+            if(index>=region.length){
+                System.exit(-1);
+            }
+            }while(tryDifferentRegion);      
             ArrayList<ArrayList<String>> result=new ArrayList<ArrayList<String>>();
             ArrayList<String> headers=new ArrayList<String>();
             if(filters==null){
