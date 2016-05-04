@@ -52,6 +52,7 @@ public class Main {
               filters.add("stats.item6");
               //CHANGE THE NAME OF THE FILE AND THE NAME OF THE LIST!!!
             try{
+                int i=0;
             for(String matchID : listLuca){//TOCHANGE
                  ArrayList<ArrayList<String>> data;
                 do{
@@ -60,7 +61,8 @@ public class Main {
                         Thread.sleep(10000);
                 }while(data==null);
                 FileManager.appendItems("matchDetailedLuca.csv", data,true);//TOCHANGE
-               
+                System.out.println(i+"th Match done!");
+               i++;
             }
             }catch(Exception e){
                 System.out.println(e.getMessage());
