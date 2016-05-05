@@ -336,7 +336,7 @@ public class GetPost {
     public ArrayList<ArrayList<String>> getMatchesInformationsByMatchID(String matchID,float headersLevel,float dataLevel,ArrayList<String> filters)
     {
         try{
-            String[] region={"euw","eune","na","br","las","lan","oce","kr","jp","ru"};
+            String[] region={"euw","eune","na","br","las","lan","oce","kr","jp","ru","tr"};
             int index=0;
             boolean tryDifferentRegion=false;
             JSONObject obj;
