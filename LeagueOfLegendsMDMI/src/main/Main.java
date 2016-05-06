@@ -58,15 +58,17 @@ public class Main {
               filters.add("stats.winner");
               //CHANGE THE NAME OF THE FILE AND THE NAME OF THE LIST!!!
               int i=0;
-              listLuca=new ArrayList<String>(listLuca.subList(i, listLuca.size()-1));
+              listLuca=new ArrayList<String>(listLuca.subList(3872, listLuca.size()-1));
             try{
                 
             for(String matchID : listLuca){//TOCHANGE
                  ArrayList<ArrayList<String>> data;
                 do{
                    data= t.getMatchesInformationsByMatchID(matchID, 1, 0,filters);
-                    if(data==null)
+                    if(data==null){
+                        t.ResetAPIIndex();
                         Thread.sleep(10000);
+                    }
                 }while(data==null);
                 FileManager.appendItems("matchDetailedV1Luca.csv", data,true);//TOCHANGE
                 System.out.println(i+"th Match done!");

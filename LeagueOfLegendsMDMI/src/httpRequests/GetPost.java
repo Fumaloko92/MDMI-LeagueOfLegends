@@ -24,16 +24,20 @@ import org.json.*;
 public class GetPost {
     private final String USER_AGENT = "";
     private ArrayList<String> API_KEYS;
-    
+    private int apiIndex;
     public GetPost(ArrayList<String> api_key){
+        apiIndex=0;
         API_KEYS=new ArrayList<String>();
         for(String s : api_key)
             API_KEYS.add(s);
     }
     
+    public void ResetAPIIndex(){
+        apiIndex=0;
+    }
     // HTTP GET request
     private JSONObject sendGet(String url) throws Exception {
-        int apiIndex=0;
+        
         HttpURLConnection con;
         boolean repeat=false;
          int responseCode;
