@@ -25,22 +25,37 @@ public class GetPost {
     private final String USER_AGENT = "";
     private ArrayList<String> API_KEYS;
     private int apiIndex;
+    private ArrayList<Boolean> currentAvailability;
     public GetPost(ArrayList<String> api_key){
         apiIndex=0;
         API_KEYS=new ArrayList<String>();
-        for(String s : api_key)
+        currentAvailability=new ArrayList<Boolean>();
+        for(String s : api_key){
             API_KEYS.add(s);
+            currentAvailability.add(Boolean.TRUE);
+        }
+            
     }
     
     public void ResetAPIIndex(){
         apiIndex=0;
+        for(int i=0;i<currentAvailability.size();i++)
+            currentAvailability.set(i, Boolean.TRUE);
     }
     // HTTP GET request
+    private Boolean OneAPIAvailable(){
+        for(Boolean b:currentAvailability)
+            if(b)
+                return Boolean.TRUE;
+        return Boolean.FALSE;
+    }
+    
     private JSONObject sendGet(String url) throws Exception {
         
         HttpURLConnection con;
         boolean repeat=false;
          int responseCode;
+         
         do{
             String s=url;
         s+=API_KEYS.get(apiIndex);
@@ -63,12 +78,16 @@ public class GetPost {
 "		\"status_code\": 404\n" +
 "	}\n" +
 "}");
-        if(responseCode==500||responseCode==429)
+        if(responseCode==500||responseCode==429){
+            currentAvailability.set(apiIndex, Boolean.FALSE);
             repeat=true;
-        else
+        }else
             repeat=false;
+        if(apiIndex+1<API_KEYS.size())
         apiIndex++;
-            }while(apiIndex<API_KEYS.size()&&repeat);
+        else
+            apiIndex=0;
+            }while(OneAPIAvailable()&&repeat);
         if(responseCode!=200)
             return null;
         BufferedReader in = new BufferedReader(
