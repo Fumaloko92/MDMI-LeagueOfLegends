@@ -23,18 +23,25 @@ import org.json.*;
  */
 public class GetPost {
     private final String USER_AGENT = "";
-    private String API_KEY ="";
+    private ArrayList<String> API_KEYS;
     
-    public GetPost(String api_key){
-        API_KEY=api_key;
+    public GetPost(ArrayList<String> api_key){
+        API_KEYS=new ArrayList<String>();
+        for(String s : api_key)
+            API_KEYS.add(s);
     }
     
     // HTTP GET request
     private JSONObject sendGet(String url) throws Exception {
-        
-        url+=API_KEY;
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        int apiIndex=0;
+        HttpURLConnection con;
+        boolean repeat=false;
+         int responseCode;
+        do{
+            String s=url;
+        s+=API_KEYS.get(apiIndex);
+        URL obj = new URL(s);
+        con = (HttpURLConnection) obj.openConnection();
         
         // optional default is GET
         con.setRequestMethod("GET");
@@ -42,8 +49,8 @@ public class GetPost {
         //add request header
         con.setRequestProperty("User-Agent", USER_AGENT);
         
-        int responseCode = con.getResponseCode();
-        System.out.println("\nSending 'GET' request to URL : " + url);
+        responseCode = con.getResponseCode();
+        System.out.println("\nSending 'GET' request to URL : " + s);
         System.out.println("Response Code : " + responseCode);
         if(responseCode==404)
             return new JSONObject("{\n" +
@@ -52,6 +59,12 @@ public class GetPost {
 "		\"status_code\": 404\n" +
 "	}\n" +
 "}");
+        if(responseCode==500||responseCode==429)
+            repeat=true;
+        else
+            repeat=false;
+        apiIndex++;
+            }while(apiIndex<API_KEYS.size()&&repeat);
         if(responseCode!=200)
             return null;
         BufferedReader in = new BufferedReader(
