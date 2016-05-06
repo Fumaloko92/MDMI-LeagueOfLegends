@@ -41,7 +41,7 @@ public class FileManager {
         }   
     }
     
-    static public void appendItems(String fileName,ArrayList<ArrayList<String>> data,boolean firstRowIsHeader)
+    static public boolean appendItems(String fileName,ArrayList<ArrayList<String>> data,boolean firstRowIsHeader)
     {
         try{
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName,true)); 
@@ -61,8 +61,10 @@ public class FileManager {
                     firstRowIsHeader=false;
             }
             out.close();
+            return true;
         }catch(Exception e){
             System.out.println(e.getMessage());
+            return false;
         }  
     }
     

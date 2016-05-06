@@ -21,7 +21,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
             ArrayList<String> apiKeys=new ArrayList<String>();
-           // apiKeys.add("de811933-2fe2-4c11-b968-48b8bb2211d0");
+            apiKeys.add("de811933-2fe2-4c11-b968-48b8bb2211d0");
             apiKeys.add("64405c49-48eb-4b10-a681-fbb24d3b90ea");
             apiKeys.add("1ace5afc-c103-4987-ad0d-d7f3f493a507");
             apiKeys.add("bd798615-215e-4d4f-9f21-1ea184ad0a46");
@@ -57,8 +57,7 @@ public class Main {
               filters.add("stats.item6");
               filters.add("stats.winner");
               //CHANGE THE NAME OF THE FILE AND THE NAME OF THE LIST!!!
-              int i=4738;
-              listLuca=new ArrayList<String>(listLuca.subList(i, listLuca.size()-1));
+              int i=0;
             try{
                 
             for(String matchID : listLuca){//TOCHANGE
@@ -70,7 +69,12 @@ public class Main {
                         Thread.sleep(10000);
                     }
                 }while(data==null);
-                FileManager.appendItems("matchDetailedV1Luca.csv", data,true);//TOCHANGE
+                boolean ris;
+                do{
+                 ris=FileManager.appendItems("matchDetailedV2Luca.csv", data,true);//TOCHANGE
+                 if(!ris)
+                     Thread.sleep(2000);
+                }while(ris==false);
                 System.out.println(i+"th Match done!");
                i++;
             }
