@@ -80,13 +80,15 @@ public class GetPost {
 "}");
         if(responseCode==500||responseCode==429){
             currentAvailability.set(apiIndex, Boolean.FALSE);
+            if(apiIndex+1<API_KEYS.size()){
+        apiIndex++;
+            }else{
+            apiIndex=0;
+            }
             repeat=true;
         }else
             repeat=false;
-        if(apiIndex+1<API_KEYS.size())
-        apiIndex++;
-        else
-            apiIndex=0;
+        
             }while(OneAPIAvailable()&&repeat);
         if(responseCode!=200)
             return null;

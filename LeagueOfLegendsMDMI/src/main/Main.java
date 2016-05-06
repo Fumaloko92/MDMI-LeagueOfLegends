@@ -57,7 +57,7 @@ public class Main {
               filters.add("stats.item6");
               filters.add("stats.winner");
               //CHANGE THE NAME OF THE FILE AND THE NAME OF THE LIST!!!
-              int i=3893;
+              int i=4429;
               listLuca=new ArrayList<String>(listLuca.subList(i, listLuca.size()-1));
             try{
                 
