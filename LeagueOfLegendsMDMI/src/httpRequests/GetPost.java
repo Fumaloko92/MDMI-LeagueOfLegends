@@ -353,7 +353,7 @@ public class GetPost {
     public ArrayList<ArrayList<String>> getAllMatchesByPlayerID(String playerID,float headersLevel,float dataLevel)
     {
         try{
-            String url= "https://euw.api.pvp.net/api/lol/euw/v2.2/matchlist/by-summoner/"+playerID+"?rankedQueues=RANKED_SOLO_5x5&seasons=PRESEASON2016,SEASON2016&api_key=";
+            String url= "https://euw.api.pvp.net/api/lol/euw/v2.2/matchlist/by-summoner/"+playerID+"?rankedQueues=RANKED_SOLO_5x5&seasons=SEASON2016&api_key=";
             JSONObject obj= sendGet(url);
             if(obj==null)
                 return null;
@@ -387,7 +387,6 @@ public class GetPost {
             }
             }else
                 tryDifferentRegion=false;
-            System.out.println(tryDifferentRegion);
             if(tryDifferentRegion){
                 index++;
             }

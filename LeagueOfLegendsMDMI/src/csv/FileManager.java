@@ -88,5 +88,81 @@ public class FileManager {
             return null;
         }
     }
-   
+    static public ArrayList<ArrayList<String>> readFile(String fileName,boolean firstRowIsHeader)
+    {
+      try{
+        BufferedReader in = new BufferedReader(new FileReader(fileName));
+        CSVReader reader = new CSVReader(in);
+        String [] nextLine;
+        ArrayList<ArrayList<String>> result=new ArrayList<ArrayList<String>>();
+        while ((nextLine = reader.readNext()) != null) {
+            if(!firstRowIsHeader){
+                 ArrayList<String> row=new ArrayList<String>();
+            for(int i=0;i<nextLine.length;i++)
+                row.add(nextLine[i]);
+                result.add(row);
+            }else
+                firstRowIsHeader=false;
+        }
+        in.close();
+        return result;
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }  
+    }
+    
+   static public void FetchMatchDetails(String toFileName,ArrayList<String> fromFileNames){
+       try{
+           ArrayList<ArrayList<String>> toWrite=new ArrayList<ArrayList<String>>();
+           for(String fileName : fromFileNames){
+               
+               BufferedReader in = new BufferedReader(new FileReader(fileName));
+                CSVReader reader = new CSVReader(in);
+                String [] nextLine;
+                ArrayList<String> row=new ArrayList<String>();
+                int championIndex=0,index=1;
+                int countWinning=0,countLosing=0;
+                while ((nextLine = reader.readNext()) != null) {
+                    
+                    for(int i=0;i<nextLine.length;i++)
+                        row.add(nextLine[i]);
+                championIndex++;
+               
+                if(championIndex==10){
+                    toWrite.add(row);
+                    row=new ArrayList<String>();
+                    championIndex=0;
+                    countWinning=0;
+                    countLosing=0;
+                }
+                index++;
+            }      
+               in.close();
+           }
+           BufferedWriter out = new BufferedWriter(new FileWriter(toFileName)); 
+            CSVWriter writer = new CSVWriter(out);
+            ArrayList<String> header=new ArrayList<String>();
+            for(int i=0;i<10;i++)
+            {
+                header.add("champID_"+(i+1)+"_player");
+                header.add("item1_"+(i+1)+"_player");
+                header.add("item2_"+(i+1)+"_player");
+                header.add("item3_"+(i+1)+"_player");
+                header.add("item4_"+(i+1)+"_player");
+                header.add("item5_"+(i+1)+"_player");
+                header.add("item6_"+(i+1)+"_player");
+                header.add("item7_"+(i+1)+"_player");
+                header.add("won_"+(i+1)+"_player");
+            }
+            toWrite.add(0,header);
+            String[] t=new String[0];
+            for(ArrayList<String> row : toWrite){
+                writer.writeNext(row.toArray(t));
+            }
+            out.close();
+       }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+   }
 }
