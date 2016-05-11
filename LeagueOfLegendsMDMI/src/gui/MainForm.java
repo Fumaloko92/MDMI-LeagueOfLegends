@@ -8,8 +8,9 @@ package gui;
 import com.sun.xml.internal.ws.util.StringUtils;
 import csv.FileManager;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-
+import org.jdmp;
 /**
  *
  * @author lucas
@@ -171,6 +172,8 @@ public class MainForm extends javax.swing.JFrame {
                     }else
                     if(isNumeric(result.get(i).get(k)))
                         result.get(i).set(k,"deletedItem");
+        for(ArrayList<String> row : result)
+            Collections.sort(row);
         FileManager.writeItems(text, result);
     }//GEN-LAST:event_jButton1ActionPerformed
 public static boolean isNumeric(String str)  
